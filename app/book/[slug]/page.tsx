@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { ArrowLeft, CalendarDays, Clock3, MapPin, Phone } from "lucide-react";
+import { getPublicBookingData } from "@/lib/public-booking";
+import { BookingFlow } from "@/components/public-booking/booking-flow";
+import { Logo } from "@/components/ui/logo";
+
+export default async function PublicBookingPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const { company, services, staff } = await getPublicBookingData(slug);
+  if (!company) return <main className="grid min-h-screen place-items-center bg-ink-50 px-5"><div className="max-w-md text-center"><Logo /><h1 className="mt-10 text-2xl font-extrabold text-ink-900">Página não encontrada</h1><p className="mt-3 text-sm leading-6 text-ink-500">Este espaço ainda não está disponível para reservas ou o link foi digitado incorretamente.</p><Link href="/" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-600"><ArrowLeft size={16} /> Conheça o AgendaFlow</Link></div></main>;
+  return <main className="min-h-screen bg-ink-50/70"><header className="border-b border-ink-100 bg-white"><div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5"><Logo /><span className="text-xs font-semibold text-ink-400">Agendamento online</span></div></header><div className="mx-auto max-w-5xl px-5 py-10 sm:py-14"><section className="mb-10 text-center"><div className="mx-auto grid size-16 place-items-center rounded-3xl bg-brand-600 text-white shadow-lg shadow-brand-600/20"><CalendarDays size={28} /></div><h1 className="mt-5 text-3xl font-extrabold tracking-tight text-ink-900">{company.name}</h1><p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-ink-500">Escolha um serviço, encontre seu horário e confirme sua reserva de forma simples.</p><div className="mt-5 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-ink-500">{company.phone && <span className="flex items-center gap-1.5"><Phone size={13} /> {company.phone}</span>}<span className="flex items-center gap-1.5"><Clock3 size={13} /> Atendimento com hora marcada</span><span className="flex items-center gap-1.5"><MapPin size={13} /> Online</span></div></section><BookingFlow company={company} services={services} staff={staff} /></div><footer className="pb-8 text-center text-xs text-ink-400">Agendamento powered by <Link href="/" className="font-bold text-brand-600">AgendaFlow</Link></footer></main>;
+}
